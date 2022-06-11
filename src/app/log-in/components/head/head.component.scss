@@ -1,0 +1,22 @@
+@import '../../../../assets/material-custom-colors.style.scss';
+
+:host {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  justify-items: center;
+  margin: 20px 0px;
+}
+
+div {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  margin: 10px 0px;
+  .icon-size {
+    font-size: 30px;
+  }
+  color: map-get($custom-primary, 800);
+}

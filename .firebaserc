@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "velocyfit": {
+      "hosting": {
+        "AccountVelocyFit": [
+          "accountvelocyfit"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "velocyfit"
+  }
+}

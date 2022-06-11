@@ -1,0 +1,35 @@
+@import '../../../../assets/material-custom-colors.style.scss';
+
+@mixin container($width, $margin) {
+  width: $width;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  justify-items: center;
+  margin: $margin;
+}
+
+:host {
+  @include container(100%, 20px 0px);
+}
+
+div.box {
+  @include container(100%, 0px);
+  padding: 10px 0px 25px 0px;
+  background-color: white;
+  border-radius: 15px;
+  h1.tittle-box{
+    width: 95%;
+    font-size: 18px;
+    text-align: center;
+    color: map-get($custom-primary, 800);
+  }
+  form.email-login-form {
+    @include container(90%, 0px);
+    .field-email{
+      width: 100%;
+      margin: 10px 0px;
+      font-size: 14px;
+    }
+  }
+}

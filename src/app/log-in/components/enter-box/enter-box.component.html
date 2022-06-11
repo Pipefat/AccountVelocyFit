@@ -1,0 +1,16 @@
+<div class="box">
+  <h1 class="tittle-box">Ingreso a Plataforma</h1>
+  <form (submit)="proceedToLogIn($event)" class="email-login-form">
+    <mat-form-field class="field-email" appearance="fill">
+      <mat-label>Email</mat-label>
+      <input type="email" matInput [formControl]="emailControl" placeholder="Ex. pat@example.com">
+      <mat-error *ngIf="emailControl.hasError('email') && !emailControl.hasError('required')">
+        El correo ingresado no es válido
+      </mat-error>
+      <mat-error *ngIf="emailControl.hasError('required')">
+        Introduce tu dirección de <strong>Correo Electrónico</strong>
+      </mat-error>
+    </mat-form-field>
+    <button type="submit" mat-flat-button color="primary" [disabled]="emailControl.invalid">Ingresar</button>
+  </form>
+</div>

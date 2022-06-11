@@ -1,1 +1,64 @@
-/* You can add global styles to this file, and also import other style files */
+// Angular Material Theme
+
+@use '~@angular/material' as mat;
+
+@import '@angular/material/theming';
+@import './assets/material-custom-colors.style.scss';
+
+@include mat.core();
+/* Pallettes */
+$AccountVelocyFit-primary: mat.define-palette($custom-primary);
+$AccountVelocyFit-accent: mat.define-palette($custom-accent, A200, A100, A400);
+$AccountVelocyFit-warn: mat.define-palette(mat.$red-palette);
+/* Theme */
+$AccountVelocyFit-theme: mat.define-light-theme((
+  color: (
+    primary: $AccountVelocyFit-primary,
+    accent: $AccountVelocyFit-accent,
+    warn: $AccountVelocyFit-warn,
+  )
+));
+
+@include mat.all-component-themes($AccountVelocyFit-theme);
+
+
+// Custom Fonts
+
+/* vietnamese */
+@font-face {
+  font-family: 'Josefin Sans';
+  font-style: normal;
+  font-weight: 550;
+  font-display: swap;
+  src: url(./assets/Josefin-Sans/Vietnamese-JosefinSansWeight550.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Josefin Sans';
+  font-style: normal;
+  font-weight: 550;
+  font-display: swap;
+  src: url(./assets/Josefin-Sans/Latin-Ext-JosefinSansWeight550.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Josefin Sans';
+  font-style: normal;
+  font-weight: 550;
+  font-display: swap;
+  src: url(./assets/Josefin-Sans/Latin-JosefinSansWeight550.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+// Global Style For Account VelocyFit Project
+
+body {
+  margin: 0;
+  background-color: #c8e6c9;
+  &, * {
+    font-family: 'Josefin Sans', Roboto, sans-serif;
+  }
+}
