@@ -10,12 +10,14 @@ export class EnterBoxComponent implements OnInit {
 
   @Output() signIn: EventEmitter<string> = new EventEmitter<string>();
 
-  public emailControl: FormControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-  ]);
+  public emailControl: FormControl;
 
-  constructor() { }
+  constructor() {
+    this.emailControl = new FormControl('', [
+      Validators.required,
+      Validators.email,
+    ]);
+  }
 
   ngOnInit(): void {
   }

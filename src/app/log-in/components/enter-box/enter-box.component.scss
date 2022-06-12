@@ -26,7 +26,7 @@ div.box {
   }
   form.email-login-form {
     @include container(90%, 0px);
-    .field-email{
+    .field{
       width: 100%;
       margin: 10px 0px;
       font-size: 14px;

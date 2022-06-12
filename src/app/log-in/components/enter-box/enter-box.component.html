@@ -1,8 +1,8 @@
 <div class="box">
   <h1 class="tittle-box">Ingreso a Plataforma</h1>
   <form (submit)="proceedToLogIn($event)" class="email-login-form">
-    <mat-form-field class="field-email" appearance="fill">
-      <mat-label>Email</mat-label>
+    <mat-form-field class="field email" appearance="fill">
+      <mat-label>Correo Electrónico</mat-label>
       <input type="email" matInput [formControl]="emailControl" placeholder="Ex. pat@example.com">
       <mat-error *ngIf="emailControl.hasError('email') && !emailControl.hasError('required')">
         El correo ingresado no es válido

@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Auth, deleteUser, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithEmailLink } from '@angular/fire/auth'
+import {
+  Auth,
+  deleteUser,
+  isSignInWithEmailLink,
+  onAuthStateChanged,
+  sendSignInLinkToEmail,
+  signInWithEmailLink,
+  signOut,
+  User
+} from '@angular/fire/auth';
 import { Database, equalTo, get, orderByChild, query, ref } from '@angular/fire/database';
-
 import { Observable, Subscriber } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -25,23 +33,44 @@ export class AuthService {
     }
   }
 
-  private handleError(error: Error, observer: Subscriber<any>): void {
-    if (environment.production) {
+  private handleError(error: Error, observer?: Subscriber<any>): void {
+    if (!environment.production) {
       console.log(error);
     }
-    if (error.message) {
-      observer.error(error.message);
+    if (observer) {
+      observer.error(error);
     }
-    observer.complete();
-  }
-
-  get isInUser(): boolean {
-    console.log(this.auth.currentUser);
-    return this.auth.currentUser === null ? false : true;
   }
 
   get isSigningIn(): boolean {
     return isSignInWithEmailLink(this.auth, window.location.href);
+  }
+
+  deleteUser(user: User): void {
+    deleteUser(user).then().catch(error => {
+      signOut(this.auth);
+      this.handleError(error);
+    });
+  }
+
+  $authState(): Observable<User | null> {
+    return new Observable<User | null>((observer) => {
+      onAuthStateChanged(this.auth, (user) => observer.next(user), error => this.handleError(error, observer));
+    });
+  }
+
+  $isInUser(): Observable<boolean> {
+    return new Observable<boolean>((observer) => {
+      onAuthStateChanged(this.auth, (user) => {
+        if (user) {
+          observer.next(true);
+          observer.complete();
+        } else {
+          observer.next(false);
+          observer.complete();
+        }
+      }, error => this.handleError(error, observer));
+    });
   }
 
   $sendLinkToSingIn(email: string): Observable<boolean> {
