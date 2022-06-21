@@ -10,7 +10,8 @@ import {
   User
 } from '@angular/fire/auth';
 import { Database, equalTo, get, orderByChild, query, ref } from '@angular/fire/database';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable, Subscriber, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -139,6 +140,7 @@ export class AuthService {
     return new Observable<boolean>((observer) => {
       get(query(ref(this.dataBase, 'supported-users'), orderByChild('email'), equalTo(email)))
       .then((snapshot) => {
+        console.log(snapshot.hasChildren());
         if (snapshot.hasChildren()) {
           observer.next(true);
           observer.complete();

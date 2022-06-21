@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "supported-users": {
+      ".read": true,
+      ".write": false,
+      ".indexOn": "email"
+    }
+  }
+}
+

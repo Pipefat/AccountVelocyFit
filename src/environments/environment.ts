@@ -11,7 +11,7 @@ export const environment = {
     storageBucket: 'velocyfit.appspot.com',
     apiKey: 'AIzaSyCPZpAU3JWuoK-g_FTZUHji3xUs4-vaE4c',
     authDomain: 'velocyfit.firebaseapp.com',
-    messagingSenderId: '758172156199',
+    messagingSenderId: '758172156199'
   }
 };
 
