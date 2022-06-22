@@ -1,7 +1,7 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { mergeMap, take, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -13,24 +13,13 @@ export class DashboardContainer implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   private $onUserAdmin: Observable<boolean> = this.authService.$authState().pipe(
-    mergeMap((user) => {
-      if (!user) {
-        return new BehaviorSubject(false);
-      } else {
-        return this.authService.$isSupportedUser(user.uid).pipe(
-          tap((res)=> {
-            if (!res) {
-              this.authService.deleteUser(user);
-            }
-          })
-        )
-      }
-    }),
-    tap(res => {
-      if (!res) {
-        this.router.navigate(['/login']);
-      }
-    })
+    mergeMap((user) => user ?
+      this.authService.$isSupportedUser(user.uid).pipe(
+        tap((res) => { if (!res) this.authService.deleteUser(user); })
+      )
+      : new BehaviorSubject(false).pipe(take(1))
+    ),
+    tap(res => { if (!res) this.router.navigate(['/login']); })
   );
 
   constructor(

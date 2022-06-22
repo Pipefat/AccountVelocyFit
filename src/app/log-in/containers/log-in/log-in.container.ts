@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -34,7 +34,8 @@ export class LogInContainer implements OnInit {
           } else {
             alert('El correo ingresado no tiene acceso, revisa nuevamente.');
           }
-        }
+        },
+        error: () => alert(this.authService.globalErrorMessage)
       })
     }
   }

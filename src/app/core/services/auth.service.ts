@@ -7,17 +7,19 @@ import {
   sendSignInLinkToEmail,
   signInWithEmailLink,
   signOut,
-  User
+  User,
 } from '@angular/fire/auth';
 import { Database, equalTo, get, orderByChild, query, ref } from '@angular/fire/database';
-import { Observable, Subscriber, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, Subscriber } from 'rxjs';
+import { map, mergeMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
+  public globalErrorMessage = 'Lo sentimos, ha ocurrido un error en el Servicio de Autenticación. Comunícate con Admin si el problema persiste';
 
   private actionCodeSettings: {
     url: string,
@@ -36,7 +38,7 @@ export class AuthService {
 
   private handleError(error: Error, observer?: Subscriber<any>): void {
     if (!environment.production) {
-      console.log(error);
+      console.log({error: error});
     }
     if (observer) {
       observer.error(error);
@@ -75,82 +77,38 @@ export class AuthService {
   }
 
   $sendLinkToSingIn(email: string): Observable<boolean> {
-    return new Observable((observer) => {
-      this.$isSupportedEmail(email).subscribe({
-        next: (res) => {
-          if (res) {
-            sendSignInLinkToEmail(this.auth, email, this.actionCodeSettings)
-              .then(() => {
-                window.localStorage.setItem('emailForSignIn', email);
-                observer.next(true);
-                observer.complete();
-              })
-              .catch(error => this.handleError(error, observer));
-          } else {
-            observer.next(false);
-            observer.complete();
-          }
-        }
-      });
-    });
+    return this.$isSupportedEmail(email).pipe(
+      mergeMap(res => res ?
+        from(sendSignInLinkToEmail(this.auth, email, this.actionCodeSettings)).pipe(map(() => true))
+        : new BehaviorSubject(false).pipe(take(1))
+      ),
+      tap({
+        next: res => { if (res) window.localStorage.setItem('emailForSignIn', email) },
+        error: this.handleError
+      })
+    );
   }
 
   $signIn(email: string): Observable<boolean> {
-    return new Observable((observer) => {
-      signInWithEmailLink(this.auth, email, window.location.href)
-      .then((result) => {
-        window.localStorage.removeItem('emailForSignIn');
-        this.$isSupportedUser(result.user.uid).subscribe({
-          next: (res) => {
-            if (res) {
-              observer.next(true);
-              observer.complete();
-            } else {
-              deleteUser(result.user)
-                .then(() => {
-                  observer.next(false);
-                  observer.complete();
-                })
-                .catch(error => this.handleError(error, observer));
-            }
-          }
-        });
+    return from(signInWithEmailLink(this.auth, email, window.location.href)).pipe(
+      mergeMap((result) => this.$isSupportedUser(result.user.uid).pipe(
+        mergeMap(res => res ? new BehaviorSubject(true).pipe(take(1)) : from(deleteUser(result.user)).pipe(map(() => false)))
+      )),
+      tap({
+        next: () => window.localStorage.removeItem('emailForSignIn'),
+        error: this.handleError
       })
-      .catch(error => this.handleError(error, observer));
-    })
+    );
   }
 
   $isSupportedUser(id: string): Observable<boolean> {
-    return new Observable<boolean>((observer) => {
-      get(ref(this.dataBase, `supported-users/${id}`))
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            observer.next(true);
-            observer.complete();
-          } else {
-            observer.next(false);
-            observer.complete();
-          }
-        })
-        .catch(error => this.handleError(error, observer));
-    })
+    return from(get(ref(this.dataBase, `supported-users/${id}`))).pipe(map(snapshot => snapshot.exists() ? true : false));
   }
 
   $isSupportedEmail(email: string): Observable<boolean> {
-    return new Observable<boolean>((observer) => {
-      get(query(ref(this.dataBase, 'supported-users'), orderByChild('email'), equalTo(email)))
-      .then((snapshot) => {
-        console.log(snapshot.hasChildren());
-        if (snapshot.hasChildren()) {
-          observer.next(true);
-          observer.complete();
-        } else {
-          observer.next(false);
-          observer.complete();
-        }
-      })
-      .catch(error => this.handleError(error, observer));
-    })
+    return from(get(query(ref(this.dataBase, 'supported-users'), orderByChild('email'), equalTo(email)))).pipe(
+      map(snapshot => snapshot.hasChildren() ? true : false)
+    );
   }
 
 }
