@@ -6,6 +6,7 @@ import { LogInContainer } from './containers/log-in/log-in.container';
 import { HeadComponent } from './components/head/head.component';
 import { EnterBoxComponent } from './components/enter-box/enter-box.component';
 import { SharedModule } from '../shared/shared.module';
+import { CoreModule } from '../core/core.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { SharedModule } from '../shared/shared.module';
   imports: [
     CommonModule,
     LogInRoutingModule,
-    SharedModule
+    SharedModule,
+    CoreModule
   ]
 })
 export class LogInModule { }

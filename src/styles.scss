@@ -57,7 +57,7 @@ $AccountVelocyFit-theme: mat.define-light-theme((
 
 body {
   margin: 0;
-  background-color: #c8e6c9;
+  background-color: map-get($custom-primary, 100);
   &, * {
     font-family: 'Josefin Sans', Roboto, sans-serif;
   }

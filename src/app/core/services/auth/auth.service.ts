@@ -11,7 +11,7 @@ import {
 } from '@angular/fire/auth';
 import { Database, equalTo, get, orderByChild, query, ref } from '@angular/fire/database';
 import { BehaviorSubject, from, Observable, Subscriber } from 'rxjs';
-import { map, mergeMap, take, tap } from 'rxjs/operators';
+import { map, mergeMap, take, tap, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -49,16 +49,19 @@ export class AuthService {
     return isSignInWithEmailLink(this.auth, window.location.href);
   }
 
-  deleteUser(user: User): void {
-    deleteUser(user).then().catch(error => {
-      signOut(this.auth);
-      this.handleError(error);
-    });
+  $deleteUser(user: User): Observable<void> {
+    return from(deleteUser(user)).pipe(
+      catchError(error => {
+        this.handleError(error);
+        return from(signOut(this.auth))
+      }),
+      tap({ error: this.handleError })
+    );
   }
 
   $authState(): Observable<User | null> {
     return new Observable<User | null>((observer) => {
-      onAuthStateChanged(this.auth, (user) => observer.next(user), error => this.handleError(error, observer));
+      onAuthStateChanged(this.auth, (user) => observer.next(user), error => { if (error) this.handleError(error, observer) });
     });
   }
 

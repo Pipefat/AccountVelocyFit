@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './services/auth/auth.service';
+import { CashFlowService } from './services/cashFlow/cash-flow.service';
 
 
 
@@ -10,7 +11,8 @@ import { AuthService } from './services/auth.service';
     CommonModule
   ],
   providers: [
-    AuthService
+    AuthService,
+    CashFlowService
   ]
 })
 export class CoreModule { }

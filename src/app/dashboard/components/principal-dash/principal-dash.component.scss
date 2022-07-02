@@ -1,0 +1,146 @@
+@import '../../../../assets/material-custom-colors.style.scss';
+
+:host {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  justify-items: flex-end;
+  position: relative;
+  z-index: -2;
+}
+
+@mixin cloud($color) {
+  height: 80px;
+  background-color: $color;
+  border-radius: 0px 0px 20px 20px;
+  box-shadow: 0px 1px 6px -1px #111;
+}
+
+div.cloud-principal {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: center;
+  @include cloud(map-get($custom-primary, 500));
+  p {
+    margin: 0px;
+    font-size: 25px;
+    &.tittle {
+      width: 95%;
+      color: map-get($custom-accent, 500);
+    }
+    &.price {
+      width: 90%;
+      color: white;
+    }
+  }
+}
+
+div.container-secondary {
+  width: 90%;
+  display: flex;
+  position: relative;
+  padding-bottom: 20px;
+  margin-bottom: 19px;
+  flex-flow: row wrap;
+  overflow: visible;
+  z-index: -3;
+  &.green {
+    .arrow_down {
+      color: map-get($custom-primary, 500);
+    }
+    border-left: 3px solid map-get($custom-primary, 500);
+  }
+  &.red {
+    .arrow_down {
+      color: map-get($custom-warn, 500);
+    }
+    border-left: 3px solid map-get($custom-warn, 500);
+  }
+  div.block {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    p {
+      &.tittle {
+        font-size: 18px;
+        margin: 0px 0px 5px 15px;
+        color: map-get($custom-accent, 500);
+      }
+      &.price {
+        font-size: 20px;
+        margin: 0px 0px 0px 7px;
+        color: white;
+      }
+    }
+    div.sign {
+      width: 40px;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      .icon-sign {
+        font-weight: bold;
+        font-size: 17px;
+        margin: 20px 0px 0px 12px;
+        font-family: 'material icons round';
+        &.red {
+          color: map-get($custom-warn, 500);
+        }
+        &.green {
+          color: map-get($custom-primary, 500);
+        }
+      }
+    }
+    $blocks: additional-income, incidents, personal-expenses;
+    @each $block in $blocks {
+      $i: index($blocks, $block);
+      &.#{$block} {
+        z-index: ($i + 2) * -1 ;
+        margin-top: -25px;
+        div.cloud {
+          display: flex;
+          flex-flow: column nowrap;
+          flex-grow: 1;
+          justify-content: flex-end;
+          @if $block == additional-income {
+            @include cloud(map-get($custom-primary, 500));
+          } @else {
+            @include cloud(map-get($custom-warn, 500));
+          }
+        }
+      }
+    }
+  }
+  & > p {
+    color: #757575;
+    font-size: 20px;
+    position: absolute;
+    bottom: -35px;
+    left: 15px;
+  }
+  .arrow_down {
+    position: absolute;
+    display: block;
+    bottom: 2px;
+    left: -31.5px;
+    font-size: 60px;
+    font-family: 'material icons round';
+  }
+}
+p.earning {
+  width: 95%;
+  margin: 0px;
+  justify-self: center;
+  font-size: 25px;
+  &.green {
+    color: map-get($custom-primary, 500);
+  }
+  &.red {
+    color: map-get($custom-warn, 500);
+  }
+}

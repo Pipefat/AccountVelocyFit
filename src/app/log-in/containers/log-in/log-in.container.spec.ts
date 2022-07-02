@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService } from 'src/app/core/services/auth.service';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { LogoFooterComponent } from 'src/app/shared/components/logo-footer/logo-footer.component';
 import { environment } from 'src/environments/environment';
 import { EnterBoxComponent } from '../../components/enter-box/enter-box.component';

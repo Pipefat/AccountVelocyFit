@@ -1,0 +1,44 @@
+<ng-container *ngIf="$dashConfig | async as dashConfig">
+  <swiper class="dashboard-main" [config]="dashConfig">
+    <!-- Slide 1: Principal -->
+    <ng-template class="slide-template" swiperSlide>
+      <div class="head-slide">
+        <mat-icon class="icon-head" aria-hidden="false" aria-label="Store icon">store</mat-icon>
+      </div>
+      <div class="slide-container">
+        <app-principal-dash [month]="$month | async"></app-principal-dash>
+        <app-day-box-dash [day]="$day | async"></app-day-box-dash>
+        <app-logo-footer></app-logo-footer>
+      </div>
+    </ng-template>
+    <!-- Slide 2: Additionals -->
+    <ng-template class="slide-template" swiperSlide>
+      <div class="head-slide">
+        <mat-icon class="icon-head" aria-hidden="false" aria-label="Point of sale icon">point_of_sale</mat-icon>
+      </div>
+      <div class="slide-container">
+        <app-additional-dash></app-additional-dash>
+        <app-logo-footer></app-logo-footer>
+      </div>
+    </ng-template>
+    <!-- Slide 3: Reports -->
+    <ng-template class="slide-template" swiperSlide>
+      <div class="head-slide">
+        <mat-icon class="icon-head" aria-hidden="false" aria-label="Insights icon">insights</mat-icon>
+      </div>
+      <div class="slide-container">
+        <app-reports-dash></app-reports-dash>
+        <app-logo-footer></app-logo-footer>
+      </div>
+    </ng-template>
+    <!-- Buttons of Slider in the DashBoard -->
+    <span slot="container-end">
+      <div class="swiper-button-prev">
+        <mat-icon class="icon prev" aria-hidden="false" aria-label="Arrow back icon">arrow_back</mat-icon>
+      </div>
+      <div class="swiper-button-next">
+        <mat-icon class="icon next" aria-hidden="false" aria-label="Arrow forward icon">arrow_forward</mat-icon>
+      </div>
+    </span>
+  </swiper>
+</ng-container>

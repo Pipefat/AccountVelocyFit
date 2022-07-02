@@ -1,7 +1,59 @@
+@import '../../../../assets/material-custom-colors.style.scss';
+
 :host {
   width: 100%;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   justify-items: center;
+}
+
+swiper.dashboard-main {
+  width: 100%;
+  max-width: 1320px;
+  div.head-slide {
+    width: 100%;
+    height: 40px;
+    background-color: map-get($custom-primary, 900);
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    .icon-head{
+      color: white;
+      &:hover {
+        color: map-get($custom-primary, 100);
+      }
+    }
+  }
+
+  div.slide-container {
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    justify-items: center;
+  }
+
+  .swiper-button-next, .swiper-button-prev {
+    width: 40px;
+    height: 40px;
+    top: 20px;
+    background-color: transparent;
+    color: white;
+    overflow: hidden;
+    &:hover {
+      color: map-get($custom-primary, 100);
+    }
+    &::after {
+      display: none;
+      position: absolute;
+      visibility: hidden;
+    }
+    .icon {
+      font-size: 30px;
+    }
+  }
+
 }

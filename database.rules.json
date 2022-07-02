@@ -1,5 +1,19 @@
 {
   "rules": {
+    "daily-cash-flow": {
+      ".read": "auth != null && root.child('supported-users').child(auth.uid).exists()",
+      ".write": "auth != null && root.child('supported-users').child(auth.uid).exists()",
+      ".indexOn": "day-code"
+    },
+    "fixed-expenses": {
+      ".read": "auth != null && root.child('supported-users').child(auth.uid).exists()",
+      ".write": false
+    },
+    "monthly-cash-flow": {
+      ".read": "auth != null && root.child('supported-users').child(auth.uid).exists()",
+      ".write": "auth != null && root.child('supported-users').child(auth.uid).exists()",
+      ".indexOn": "month-code"
+    },
     "supported-users": {
       ".read": true,
       ".write": false,

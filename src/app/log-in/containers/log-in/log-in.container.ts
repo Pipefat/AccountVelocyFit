@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/services/auth.service';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
 
 @Component({
   selector: 'app-log-in',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './log-in.container.html',
   styleUrls: ['./log-in.container.scss']
 })

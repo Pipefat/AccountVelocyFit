@@ -1,0 +1,52 @@
+<ng-container *ngIf="$month | async as month">
+  <div class="cloud-principal">
+    <p class="tittle">Utilidad {{ months[month.month - 1] }}:</p>
+    <p class="price">{{ month.utility | money }}</p>
+  </div>
+  <div
+    [ngClass]="{
+      'container-secondary': true,
+      'green': month.profits >= 0,
+      'red': month.profits < 0
+    }">
+    <div class="block additional-income">
+      <div class="sign">
+        <mat-icon class="icon-sign green" aria-hidden="false" aria-label="Add icon">add</mat-icon>
+      </div>
+      <div class="cloud">
+        <p class="price">{{ month.additionalIncome | money }}</p>
+        <p class="tittle">Ingresos Adicionales</p>
+      </div>
+    </div>
+    <div class="block incidents">
+      <div class="sign">
+        <mat-icon class="icon-sign red" aria-hidden="false" aria-label="Remove icon">remove</mat-icon>
+      </div>
+      <div class="cloud">
+        <p class="price">{{ month.incidents | money }}</p>
+        <p class="tittle">Incidentes</p>
+      </div>
+    </div>
+    <div class="block personal-expenses">
+      <div class="sign">
+        <mat-icon class="icon-sign red" aria-hidden="false" aria-label="Remove icon">remove</mat-icon>
+      </div>
+      <div class="cloud">
+        <p class="price">{{ month.personalSpending | money }}</p>
+        <p class="tittle">Gastos Personales</p>
+      </div>
+    </div>
+    <p>Ganancias Previstas</p>
+    <mat-icon class="arrow_down" aria-hidden="false" aria-label="Arrow drop down icon">
+      arrow_drop_down
+    </mat-icon>
+  </div>
+  <p
+    [ngClass]="{
+      'earning': true,
+      'green': month.profits >= 0,
+      'red': month.profits < 0
+    }">
+    {{ month.profits | money }}
+  </p>
+</ng-container>
