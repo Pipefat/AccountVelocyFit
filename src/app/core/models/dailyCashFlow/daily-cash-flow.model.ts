@@ -40,6 +40,21 @@ export class DailyCashFlowModel {
     return Math.trunc(this.dailyCashFlowData["day-code"] / 100);
   }
 
+  get prevIdDay(): number {
+    const prevDate = new Date(this.year, this.month - 1, this.day - 1);
+    const prevDay = prevDate.getDate();
+    const prevMonth = prevDate.getMonth() + 1;
+    const prevYear = prevDate.getFullYear();
+    return parseInt(`-${prevYear}${prevMonth < 10 ? `0${prevMonth}` : prevMonth}${prevDay < 10 ? `0${prevDay}` : prevDay}`);
+  }
+
+  get nextIdDay(): number {
+    const nextDate = new Date(this.year, this.month - 1, this.day + 1);
+    const nextDay = nextDate.getDate();
+    const nextMonth = nextDate.getMonth() + 1;
+    const nextYear = nextDate.getFullYear();
+    return parseInt(`-${nextYear}${nextMonth < 10 ? `0${nextMonth}` : nextMonth}${nextDay < 10 ? `0${nextDay}` : nextDay}`);
+  }
   get expenses(): number {
     return this.sales - this.toStrongBox - this.toBanks - this.incidents - this.personalSpending;
   }
@@ -76,6 +91,47 @@ export class DailyCashFlowModel {
         "operating-expenses": this.cashFlowService.month.operatingExpenses + (this.expenses - this.prevExpenses),
         "personal-spending": this.cashFlowService.month.personalSpending + (this.personalSpending - this.dailyCashFlowData['personal-spending']),
         "sales": this.cashFlowService.month.sales + (this.sales - this.dailyCashFlowData.sales)
+      };
+    }
+    this.cashFlowService.updateCashFlow(updates);
+  }
+
+  addNextDay(): void {
+    const nextDate = new Date(this.year, this.month - 1, this.day + 1);
+    const nextDay = nextDate.getDate();
+    const nextMonth = nextDate.getMonth() + 1;
+    const nextYear = nextDate.getFullYear();
+
+    const lastDate = new Date(this.year, this.month - 1, this.day - 61);
+    const lastDay = lastDate.getDate();
+    const lastMonth = lastDate.getMonth() + 1;
+    const lastYear = lastDate.getFullYear();
+
+    const keyNextMonth = `${nextYear}-${nextMonth < 10 ? `0${nextMonth}` : nextMonth}`;
+    const keyNextDay = `${keyNextMonth}-${nextDay < 10 ? `0${nextDay}` : nextDay}`;
+    const keyLastDay = `${lastYear}-${lastMonth < 10 ? `0${lastMonth}` : lastMonth}-${lastDay < 10 ? `0${lastDay}` : lastDay}`;
+
+    const updates: { [id: string]: DailyCashFlowInterface | MonthlyCashFlowInterface | null } = {};
+    updates[`/daily-cash-flow/${keyNextDay}`] = {
+      "day-code": this.nextIdDay,
+      "incidents": 0,
+      "new-consumtions": 0,
+      "personal-spending": 0,
+      "sales": 0,
+      "to-banks": 0,
+      "to-strong-box": 0
+    };
+    updates[`/daily-cash-flow/${keyLastDay}`] = null;
+    if (this.cashFlowService.month && nextMonth !== this.month) {
+      updates[`/monthly-cash-flow/${keyNextMonth}`] = {
+        "additional-income": 0,
+        "fe-forResults": this.cashFlowService.month.feForResults,
+        "fe-forUtility": this.cashFlowService.month.feForUtility,
+        "incidents": 0,
+        "month-code": Math.trunc(this.nextIdDay / 100),
+        "operating-expenses": 0,
+        "personal-spending": 0,
+        "sales": 0
       };
     }
     this.cashFlowService.updateCashFlow(updates);

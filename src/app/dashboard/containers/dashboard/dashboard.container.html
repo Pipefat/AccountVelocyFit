@@ -7,7 +7,7 @@
       </div>
       <div class="slide-container">
         <app-principal-dash [month]="$month | async"></app-principal-dash>
-        <app-day-box-dash [day]="$day | async"></app-day-box-dash>
+        <app-day-box-dash (viewDay)="$viewDay.next($event)" [day]="$day | async"></app-day-box-dash>
         <app-logo-footer></app-logo-footer>
       </div>
     </ng-template>
@@ -17,7 +17,7 @@
         <mat-icon class="icon-head" aria-hidden="false" aria-label="Point of sale icon">point_of_sale</mat-icon>
       </div>
       <div class="slide-container">
-        <app-additional-dash></app-additional-dash>
+        <app-additional-dash [month]="$month | async"></app-additional-dash>
         <app-logo-footer></app-logo-footer>
       </div>
     </ng-template>
@@ -27,7 +27,7 @@
         <mat-icon class="icon-head" aria-hidden="false" aria-label="Insights icon">insights</mat-icon>
       </div>
       <div class="slide-container">
-        <app-reports-dash></app-reports-dash>
+        <app-reports-dash [month]="$month | async"></app-reports-dash>
         <app-logo-footer></app-logo-footer>
       </div>
     </ng-template>

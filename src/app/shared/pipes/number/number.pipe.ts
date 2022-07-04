@@ -7,11 +7,17 @@ export class NumberPipe implements PipeTransform {
 
   transform(value: string | null, ...args: unknown[]): number {
     const stringNum: string = value ?
-      value.replace(/([^-\d]|(?<=.)-)/g, '').replace(/^0+/, '') !== '' ?
-        value.replace(/([^-\d]|(?<=.)-)/g, '').replace(/^0+/, '')
+      this.valueNumber(value) !== '' ?
+        this.valueNumber(value)
         : '0'
       :'0'
     return parseInt(stringNum);
+  }
+
+  valueNumber(value: string): string {
+    return value
+      .replace(/([^-\d]|(?<=.)-|-(?!(\d|\$0*[1-9])))/g, '')
+      .replace(/(?<=^-?)0+/, '');
   }
 
 }

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
+  child,
   Database,
+  endAt,
   equalTo,
   limitToFirst,
   limitToLast,
@@ -39,13 +41,6 @@ export class CashFlowService {
     tap(month => this.month = month)
   );
 
-  public $lastMonth: Observable<MonthlyCashFlowModel> = this.$currentDay.pipe(
-    switchMap(day => this.$onMonth(
-      day.idMonth + 1,
-      new Date(day.year, day.month - 1, 0).getDate()
-    ))
-  );
-
   public month!: MonthlyCashFlowModel | null;
 
   constructor(
@@ -76,15 +71,15 @@ export class CashFlowService {
         error => observer.error(error)
       );
     }).pipe(
-      finalize(unsubscribe),
-      tap({ error: this.handleError })
+      tap({ error: this.handleError }),
+      finalize(unsubscribe)
     );
   }
 
   public get $onLastWeek(): Observable<DailyCashFlowModel> {
     let unsubscribe: Unsubscribe = () => {};
     return new Observable<DailyCashFlowModel>((observer) => {
-      onChildAdded(
+      unsubscribe = onChildAdded(
         query(ref(this.database, 'daily-cash-flow'), orderByKey(), limitToLast(8)),
         snapshot => {
           if (snapshot.exists()) {
@@ -98,13 +93,46 @@ export class CashFlowService {
       );
     }).pipe(
       take(7),
-      finalize(unsubscribe),
-      tap({ error: this.handleError })
+      tap({ error: this.handleError }),
+      finalize(unsubscribe)
     );
   }
 
-  public updateCashFlow(value: { [id: string]: DailyCashFlowInterface | MonthlyCashFlowInterface }): void {
+  public $onLastMonth(keyMonth: string, lastDay: number): Observable<DailyCashFlowModel> {
+    let unsubscribe: Unsubscribe = () => {};
+    return new Observable<DailyCashFlowModel>((observer) => {
+      unsubscribe = onChildAdded(
+        query(
+          ref(this.database, 'daily-cash-flow'),
+          orderByKey(),
+          startAt(`${keyMonth}-01`),
+          endAt(`${keyMonth}-${lastDay}`)
+        ),
+        snapshot => {
+          if (snapshot.exists()) {
+            const day: DailyCashFlowInterface = snapshot.val();
+            observer.next(new DailyCashFlowModel(this, day));
+          } else {
+            observer.error(new Error('No se encontró información en un día de $onLastMonth'));
+          }
+        },
+        error => observer.error(error)
+      );
+    }).pipe(
+      take(lastDay),
+      tap({ error: this.handleError }),
+      finalize(unsubscribe)
+    );
+  }
+
+  public updateCashFlow(value: { [id: string]: DailyCashFlowInterface | MonthlyCashFlowInterface | null }): void {
     update(ref(this.database), value)
+      .then(() => {}, error => this.handleError(error))
+      .catch(error => this.handleError(error));
+  }
+
+  public updateMonthlyCashFlow(keyMonth: string, value: Partial<MonthlyCashFlowInterface>): void {
+    update(child(ref(this.database, 'monthly-cash-flow'), keyMonth), value)
       .then(() => {}, error => this.handleError(error))
       .catch(error => this.handleError(error));
   }
@@ -125,8 +153,8 @@ export class CashFlowService {
         error => observer.error(error)
       );
     }).pipe(
-      finalize(unsubscribe),
-      tap({ error: this.handleError })
+      tap({ error: this.handleError }),
+      finalize(unsubscribe)
     );
   }
 
@@ -147,8 +175,8 @@ export class CashFlowService {
         error => observer.error(error)
       );
     }).pipe(
-      finalize(unsubscribe),
-      tap({ error: this.handleError })
+      tap({ error: this.handleError }),
+      finalize(unsubscribe)
     );
   }
 

@@ -1,8 +1,8 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ReplaySubject, Subscription, Observable, Subject, interval } from 'rxjs';
-import { debounceTime, switchMap, take, tap } from 'rxjs/operators';
+import { ReplaySubject, Subscription, Observable, Subject, interval, asyncScheduler } from 'rxjs';
+import { debounceTime, switchMap, take, tap, throttleTime } from 'rxjs/operators';
 import { DailyCashFlowModel } from 'src/app/core/models/dailyCashFlow/daily-cash-flow.model';
 import { MoneyPipe } from 'src/app/shared/pipes/money/money.pipe';
 import { NumberPipe } from 'src/app/shared/pipes/number/number.pipe';
@@ -33,9 +33,13 @@ export class DayBoxDashComponent implements OnInit, OnDestroy {
     return this._day;
   }
 
+  @Output() viewDay: EventEmitter<number | undefined> = new EventEmitter<number | undefined>();
+
   private subscriptions: Subscription[] = [];
 
   private _day!: DailyCashFlowModel | null;
+
+  public daySlide = 0;
 
   public months: string[] = [
     'Enero',
@@ -56,6 +60,8 @@ export class DayBoxDashComponent implements OnInit, OnDestroy {
 
   public $day: ReplaySubject<DailyCashFlowModel> = new ReplaySubject<DailyCashFlowModel>(1);
 
+  public $changeDay: Subject<-1 | 1> = new Subject<-1 | 1>();
+
   public dayForm!: FormGroup;
 
   constructor(
@@ -65,7 +71,8 @@ export class DayBoxDashComponent implements OnInit, OnDestroy {
   ) {
     this.buildForm();
     this.subscriptions.push(
-      this.$onFormChanges.subscribe()
+      this.$onFormChanges.subscribe(),
+      this.$onChangeDay.subscribe()
     );
   }
 
@@ -104,11 +111,34 @@ export class DayBoxDashComponent implements OnInit, OnDestroy {
     )
   }
 
+  get $onChangeDay(): Observable<-1 | 1> {
+    return this.$changeDay.pipe(
+      throttleTime(400),
+      tap((side) => {
+        if (side === -1 && this.day) {
+          this.viewDay.emit(this.day.prevIdDay);
+          this.daySlide--;
+        }
+        if (side === 1 && this.day && this.daySlide !== 0) {
+          this.viewDay.emit(this.day.nextIdDay);
+          this.daySlide++;
+        }
+      })
+    );
+  }
+
   ngOnInit(): void {
   }
 
-  nextDay(event: Event): void {
+  addNewDay(event: Event): void {
     event.preventDefault();
+    if (this.daySlide !== 0) {
+      this.viewDay.emit();
+      this.daySlide = 0;
+    } else if (this.day) {
+      this.day.addNextDay();
+      this.viewDay.emit();
+    }
   }
 
   ngOnDestroy(): void {

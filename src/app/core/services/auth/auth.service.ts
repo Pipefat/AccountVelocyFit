@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  public globalErrorMessage = 'Lo sentimos, ha ocurrido un error en el Servicio de Autenticación. Comunícate con Admin si el problema persiste';
+  public globalErrorMessage = 'Ha ocurrido un error en el Servicio de Autenticación, por favor "RECARGA LA PÁGINA" y si el problema persiste comunícate con Admin ';
 
   private actionCodeSettings: {
     url: string,

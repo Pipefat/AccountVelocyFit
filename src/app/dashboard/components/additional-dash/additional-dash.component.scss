@@ -1,0 +1,65 @@
+@import '../../../../assets/material-custom-colors.style.scss';
+
+:host {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  justify-items: center;
+  position: relative;
+  margin: 15px 0px;
+}
+
+div.box-container {
+  width: 90%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0px 2px 6px -1px #111;
+  margin: 15px 0px;
+  .field {
+    width: 85%;
+    font-size: 14px;
+    margin: 25px 0px 0px 0px;
+  }
+  div.foot-box {
+    width: 85%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    margin: 11px 0px 15px 0px;
+    div.tittle {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-grow: 1;
+      p {
+        font-size: 18px;
+        margin: 0px;
+        &.warn {
+          color: map-get($custom-warn, 500);
+        }
+        &.primary {
+          color: map-get($custom-primary, 500);
+        }
+      }
+      h3 {
+        color: #757575;
+        font-size: 16px;
+        font-weight: normal;
+        margin: 0px 0px 0px 20px;
+        text-indent: -10px;
+        padding-left: 10px;
+      }
+    }
+    button.ready-button {
+      width: 100px;
+      font-size: 15px;
+    }
+  }
+}

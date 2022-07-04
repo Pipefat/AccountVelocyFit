@@ -30,8 +30,6 @@ export class DashboardContainer implements OnInit, OnDestroy {
 
   public $month: ReplaySubject<MonthlyCashFlowModel> = new ReplaySubject<MonthlyCashFlowModel>(1);
 
-  public $lastMonth: ReplaySubject<MonthlyCashFlowModel> = new ReplaySubject<MonthlyCashFlowModel>(1);
-
   constructor(
     private authService: AuthService,
     private cashFlowService: CashFlowService,
@@ -40,8 +38,7 @@ export class DashboardContainer implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.$onUserAdmin.subscribe(),
       this.$onDay.subscribe(),
-      this.$onMonth.subscribe(),
-      this.$onLastMonth.subscribe()
+      this.$onMonth.subscribe()
     );
   }
 
@@ -61,8 +58,10 @@ export class DashboardContainer implements OnInit, OnDestroy {
 
   private get $onDay(): Observable<DailyCashFlowModel> {
     return this.$viewDay.pipe(
-      switchMap(dayCode => this.cashFlowService.$onDay(dayCode)),
-      catchError(this.handleCashFlowError),
+      switchMap(dayCode => this.cashFlowService.$onDay(dayCode).pipe(
+        tap({ error: () => this.$viewDay.next(undefined) }),
+        catchError(this.handleCashFlowError)
+      )),
       tap(day => this.$day.next(day))
     );
   }
@@ -71,13 +70,6 @@ export class DashboardContainer implements OnInit, OnDestroy {
     return this.cashFlowService.$currentMonth.pipe(
       catchError(this.handleCashFlowError),
       tap(month => this.$month.next(month))
-    );
-  }
-
-  private get $onLastMonth(): Observable<MonthlyCashFlowModel> {
-    return this.cashFlowService.$lastMonth.pipe(
-      catchError(this.handleCashFlowError),
-      tap(month => this.$lastMonth.next(month))
     );
   }
 
@@ -93,7 +85,7 @@ export class DashboardContainer implements OnInit, OnDestroy {
   }
 
   private handleCashFlowError(error: Error): Observable<never> {
-    alert('Hubo un error en la base de datos de Flujo de Efectivo, si el problema persiste comunícate con Admin');
+    alert('Hubo un error en la base de datos de Flujo de Efectivo, por favor "RECARGA LA PÁGINA" y si el problema persiste comunícate con Admin');
     if (error.message) console.log(error.message);
     return NEVER;
   };

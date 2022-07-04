@@ -6,6 +6,10 @@ import { CashFlowService } from "../../services/cashFlow/cash-flow.service";
 
 export class MonthlyCashFlowModel {
 
+  private salesLastMonth = 0;
+
+  private reportLastMonth: ChartDataInterface['series'] = [];
+
   public feForResults: number = this.monthlyCashFlowData['fe-forResults'];
 
   public feForUtility: number = this.monthlyCashFlowData['fe-forUtility'];
@@ -29,25 +33,29 @@ export class MonthlyCashFlowModel {
   public $salesLastWeek: ReplaySubject<number> = new ReplaySubject<number>(7);
   private salesLastWeek = 0;
 
-  public $reportLastWeek: BehaviorSubject<ChartDataInterface['series']> = new BehaviorSubject<ChartDataInterface['series']>([]);
+  public $reportLastWeek: BehaviorSubject<{report: ChartDataInterface['series'], sales: number}>
+    = new BehaviorSubject<{report: ChartDataInterface['series'], sales: number}>({report: [], sales: 0});
 
   constructor(
     private cashFlowService: CashFlowService,
-    private currentDay: number,
+    public currentDay: number,
     private monthlyCashFlowData: MonthlyCashFlowInterface,
   ) {
     this.cashFlowService.$onLastWeek.pipe(catchError(() => NEVER)).subscribe(day => {
       const days: string[] = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
       this.$salesLastWeek.next(this.salesLastWeek + day.sales);
       this.salesLastWeek = this.salesLastWeek + day.sales;
-      this.$reportLastWeek.next([
-        ...this.$reportLastWeek.value,
-        {
-          name: days[day.dayWeek],
-          value: day.sales
-        }
-      ]);
-    })
+      this.$reportLastWeek.next({
+        report: [
+          ...this.$reportLastWeek.value.report,
+          {
+            name: days[day.dayWeek],
+            value: day.sales
+          }
+        ],
+        sales: this.salesLastWeek + day.sales
+      });
+    });
   }
 
   get id(): number {
@@ -68,6 +76,69 @@ export class MonthlyCashFlowModel {
 
   get profits(): number {
     return this.utility + this.additionalIncome - this.incidents - this.personalSpending
+  }
+
+  get lastMonth(): Promise<{report: ChartDataInterface['series'], sales: number}> {
+    const lastDay = new Date(this.year, this.month - 1, 0).getDate();
+    return new Promise<{report: ChartDataInterface['series'], sales: number}>((res, rej) => {
+      this.cashFlowService.$onLastMonth(`${this.year}-${this.month < 10 ? `0${this.month}` : this.month}`, lastDay)
+        .subscribe({
+          next: day => {
+            this.salesLastMonth = this.salesLastMonth + day.sales;
+            this.reportLastMonth = [
+              ...this.reportLastMonth,
+              {
+                name: day.day.toString(),
+                value: day.sales
+              }
+            ];
+          },
+          error: error => rej(error),
+          complete: () => res({report: this.reportLastMonth, sales: this.salesLastMonth})
+        });
+    });
+  }
+
+  set addAdditionalIncome(value: number){
+    this.additionalIncome = this.monthlyCashFlowData['additional-income'] + value;
+  }
+
+  submitAdditionalIncome() {
+    const keyMonth = `${this.year}-${this.month < 10 ? `0${this.month}` : this.month}`;
+    const value: Partial<MonthlyCashFlowInterface> = {
+      'additional-income': this.additionalIncome
+    };
+    if (this.additionalIncome !== this.monthlyCashFlowData["additional-income"]) {
+      this.cashFlowService.updateMonthlyCashFlow(keyMonth, value)
+    };
+  }
+
+  set addIncidents(value: number){
+    this.incidents = this.monthlyCashFlowData['incidents'] + value;
+  }
+
+  submitIncidents() {
+    const keyMonth = `${this.year}-${this.month < 10 ? `0${this.month}` : this.month}`;
+    const value: Partial<MonthlyCashFlowInterface> = {
+      'incidents': this.incidents
+    };
+    if (this.incidents !== this.monthlyCashFlowData.incidents) {
+      this.cashFlowService.updateMonthlyCashFlow(keyMonth, value)
+    };
+  }
+
+  set addPersonalSpending(value: number){
+    this.personalSpending = this.monthlyCashFlowData['personal-spending'] + value;
+  }
+
+  submitPersonalSpending() {
+    const keyMonth = `${this.year}-${this.month < 10 ? `0${this.month}` : this.month}`;
+    const value: Partial<MonthlyCashFlowInterface> = {
+      'personal-spending': this.personalSpending
+    };
+    if (this.personalSpending !== this.monthlyCashFlowData["personal-spending"]) {
+      this.cashFlowService.updateMonthlyCashFlow(keyMonth, value)
+    };
   }
 
 }

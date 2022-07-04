@@ -26,17 +26,28 @@ div.box-container {
     justify-content: space-between;
     align-items: center;
     align-content: center;
-    color: map-get($custom-primary, 900);
     margin: 10px 0px;
     .button {
       font-size: 28px;
       font-weight: bold;
       font-family: 'material icons round';
+      &.prev {
+        color: map-get($custom-primary, 900);
+      }
+      &.next {
+        &.active {
+          color: map-get($custom-primary, 900);
+        }
+        &.inactive {
+          color: map-get($custom-primary, 300);
+        }
+      }
     }
     h2.tittle-box {
       font-size: 16px;
       margin: 5px 0px 0px 0px;
       text-align: center;
+      color: map-get($custom-primary, 900);
     }
   }
   form.day-form {

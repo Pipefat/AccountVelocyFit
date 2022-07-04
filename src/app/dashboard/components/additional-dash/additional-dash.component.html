@@ -1,1 +1,80 @@
-<p>additional-dash works!</p>
+<ng-container *ngIf="$month | async as month">
+  <!-- Addiotional Incomes Container -->
+  <div class="box-container">
+    <mat-form-field class="field" appearance="fill">
+      <mat-label>Ingresos Adicionales</mat-label>
+      <input matInput type="text" [formControl]="additionalIncome">
+    </mat-form-field>
+    <div class="foot-box">
+      <div class="tittle">
+        <p [ngClass]="{
+          'primary': month.additionalIncome >= 0,
+          'warn': month.additionalIncome < 0
+          }">
+          {{ month.additionalIncome | money }}
+        </p>
+        <h3>Total en {{ months[month.month - 1] }}</h3>
+      </div>
+      <button
+        mat-flat-button
+        (click)="month.submitAdditionalIncome()"
+        color="primary"
+        type="button"
+        class="ready-button">
+        Enviar
+      </button>
+    </div>
+  </div>
+  <!-- Personal Spending Container -->
+  <div class="box-container">
+    <mat-form-field class="field" appearance="fill">
+      <mat-label>Gastos Personales</mat-label>
+      <input matInput type="text" [formControl]="personalSpending">
+    </mat-form-field>
+    <div class="foot-box">
+      <div class="tittle">
+        <p [ngClass]="{
+          'primary': month.personalSpending <= 0,
+          'warn': month.personalSpending > 0
+          }">
+          {{ month.personalSpending | money }}
+        </p>
+        <h3>Total en {{ months[month.month - 1] }}</h3>
+      </div>
+      <button
+        mat-flat-button
+        (click)="month.submitPersonalSpending()"
+        color="warn"
+        type="button"
+        class="ready-button">
+        Enviar
+      </button>
+    </div>
+  </div>
+  <!-- Incidents from business Container -->
+  <div class="box-container">
+    <mat-form-field class="field" appearance="fill">
+      <mat-label>Incidentes en el Negocio</mat-label>
+      <input matInput type="text" [formControl]="incidents">
+    </mat-form-field>
+    <div class="foot-box">
+      <div class="tittle">
+        <p [ngClass]="{
+          'primary': month.incidents <= 0,
+          'warn': month.incidents > 0
+          }">
+          {{ month.incidents | money }}
+        </p>
+        <h3>Total en {{ months[month.month - 1] }}</h3>
+      </div>
+      <button
+        mat-flat-button
+        (click)="month.submitIncidents()"
+        color="warn"
+        type="button"
+        class="ready-button">
+        Enviar
+      </button>
+    </div>
+  </div>
+</ng-container>

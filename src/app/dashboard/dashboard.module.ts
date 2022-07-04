@@ -10,6 +10,7 @@ import { AdditionalDashComponent } from './components/additional-dash/additional
 import { ReportsDashComponent } from './components/reports-dash/reports-dash.component';
 import { CoreModule } from '../core/core.module';
 import { DayBoxDashComponent } from './components/day-box-dash/day-box-dash.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { DayBoxDashComponent } from './components/day-box-dash/day-box-dash.comp
     DashboardRoutingModule,
     SwiperModule,
     SharedModule,
-    CoreModule
+    CoreModule,
+    NgxChartsModule
   ]
 })
 export class DashboardModule { }
