@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MoneyPipe } from './pipes/money/money.pipe';
 import { NumberPipe } from './pipes/number/number.pipe';
+import { EnvelopePipe } from './pipes/envelope/envelope.pipe';
 
 
 
@@ -14,7 +15,8 @@ import { NumberPipe } from './pipes/number/number.pipe';
   declarations: [
     LogoFooterComponent,
     MoneyPipe,
-    NumberPipe
+    NumberPipe,
+    EnvelopePipe
   ],
   imports: [
     CommonModule,
@@ -26,7 +28,8 @@ import { NumberPipe } from './pipes/number/number.pipe';
   providers: [
     CurrencyPipe,
     MoneyPipe,
-    NumberPipe
+    NumberPipe,
+    EnvelopePipe
   ],
   exports: [
     MatIconModule,
@@ -35,7 +38,8 @@ import { NumberPipe } from './pipes/number/number.pipe';
     LogoFooterComponent,
     ReactiveFormsModule,
     MoneyPipe,
-    NumberPipe
+    NumberPipe,
+    EnvelopePipe
   ]
 })
 export class SharedModule { }

@@ -32,10 +32,12 @@ div.box-container {
       font-weight: bold;
       font-family: 'material icons round';
       &.prev {
+        cursor: pointer;
         color: map-get($custom-primary, 900);
       }
       &.next {
         &.active {
+          cursor: pointer;
           color: map-get($custom-primary, 900);
         }
         &.inactive {

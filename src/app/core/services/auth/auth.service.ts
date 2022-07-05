@@ -49,6 +49,10 @@ export class AuthService {
     return isSignInWithEmailLink(this.auth, window.location.href);
   }
 
+  get logOut(): Promise<void> {
+    return signOut(this.auth)
+  }
+
   $deleteUser(user: User): Observable<void> {
     return from(deleteUser(user)).pipe(
       catchError(error => {

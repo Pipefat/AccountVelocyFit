@@ -8,7 +8,7 @@ export class MoneyPipe implements PipeTransform {
 
   constructor(private currencyPipe: CurrencyPipe){}
 
-  transform(value: string | number, ...args: unknown[]): string {
+  transform(value: string | number, withoutSymbol?: boolean): string {
     const number = typeof(value) === 'number' ? Math.floor(value).toString() : value;
     const currency = this.currencyPipe.transform(
       number.replace(/([^-\d]|(?<=.)-|-(?!(\d|\$0*[1-9])))/g, '').replace(/(?<=^-?)0+/, ''),
@@ -16,7 +16,9 @@ export class MoneyPipe implements PipeTransform {
       'symbol',
       '1.0-0'
     );
-    return currency ? currency.replace(/,/g, '.') : '';
+    const currencyDots = currency ? currency.replace(/,/g, '.') : '';
+
+    return withoutSymbol ? currencyDots.replace(/\$/g, '') : currencyDots;
   }
 
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, NEVER, Observable, ReplaySubject, Subscription } from 'rxjs';
+import { BehaviorSubject, from, NEVER, Observable, ReplaySubject, Subscription } from 'rxjs';
 import { catchError, finalize, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { DailyCashFlowModel } from 'src/app/core/models/dailyCashFlow/daily-cash-flow.model';
 import { MonthlyCashFlowModel } from 'src/app/core/models/monthlyCashFlow/monthly-cash-flow.model';
@@ -30,6 +30,8 @@ export class DashboardContainer implements OnInit, OnDestroy {
 
   public $month: ReplaySubject<MonthlyCashFlowModel> = new ReplaySubject<MonthlyCashFlowModel>(1);
 
+  public $lastMonth: ReplaySubject<MonthlyCashFlowModel> = new ReplaySubject<MonthlyCashFlowModel>(1);
+
   constructor(
     private authService: AuthService,
     private cashFlowService: CashFlowService,
@@ -38,8 +40,13 @@ export class DashboardContainer implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.$onUserAdmin.subscribe(),
       this.$onDay.subscribe(),
-      this.$onMonth.subscribe()
+      this.$onMonth.subscribe(),
+      this.$onLastMonth.subscribe()
     );
+  }
+
+  logOut(): void {
+    from(this.authService.logOut).pipe(catchError(this.handleAuthError)).subscribe()
   }
 
   private get $onUserAdmin(): Observable<boolean> {
@@ -70,6 +77,13 @@ export class DashboardContainer implements OnInit, OnDestroy {
     return this.cashFlowService.$currentMonth.pipe(
       catchError(this.handleCashFlowError),
       tap(month => this.$month.next(month))
+    );
+  }
+
+  private get $onLastMonth(): Observable<MonthlyCashFlowModel> {
+    return this.cashFlowService.$lastMonth.pipe(
+      catchError(this.handleCashFlowError),
+      tap(month => this.$lastMonth.next(month))
     );
   }
 

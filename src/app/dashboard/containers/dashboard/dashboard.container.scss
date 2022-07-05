@@ -34,6 +34,9 @@ swiper.dashboard-main {
     flex-flow: row wrap;
     justify-content: center;
     justify-items: center;
+    button.logout {
+      margin: 20px 0px 5px 0px;
+    }
   }
 
   .swiper-button-next, .swiper-button-prev {

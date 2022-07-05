@@ -4,6 +4,7 @@ import {
   Database,
   endAt,
   equalTo,
+  get,
   limitToFirst,
   limitToLast,
   onChildAdded,
@@ -19,6 +20,7 @@ import {
 import { Observable, ReplaySubject, Subscriber } from 'rxjs';
 import { finalize, switchMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { BoxData } from '../../interfaces/box-data';
 
 import { MonthlyCashFlowInterface } from '../../interfaces/monthly-cash-flow.interface';
 import { DailyCashFlowModel } from '../../models/dailyCashFlow/daily-cash-flow.model';
@@ -37,8 +39,18 @@ export class CashFlowService {
   );
 
   public $currentMonth: Observable<MonthlyCashFlowModel> = this.$currentDay.pipe(
-    switchMap(day => this.$onMonth(day.idMonth, day.day)),
-    tap(month => this.month = month)
+    switchMap(day => this.$onMonth(day.idMonth, day.day))
+  );
+
+  public $lastMonth: Observable<MonthlyCashFlowModel> = this.$currentDay.pipe(
+    switchMap(day => {
+      const date = new Date(day.year, day.month - 1, 0);
+      const month = date.getMonth() + 1;
+      return this.$onMonth(
+        parseInt(`-${date.getFullYear()}${month < 10 ? `0${month}` : month}`),
+        date.getDate()
+      )
+    })
   );
 
   public month!: MonthlyCashFlowModel | null;
@@ -58,8 +70,10 @@ export class CashFlowService {
         ),
         snapshot => {
           if (snapshot.hasChildren()) {
-            const dayData: DailyCashFlowInterface = snapshot.val()[Object.keys(snapshot.val())[0]]
-            observer.next(new DailyCashFlowModel(this, dayData));
+            const dayData: DailyCashFlowInterface = snapshot.val()[Object.keys(snapshot.val())[0]];
+            const dayInstance: DailyCashFlowModel = new DailyCashFlowModel(this, dayData);
+            this.$onMonth(dayInstance.idMonth, dayInstance.day).pipe(take(1)).subscribe(month => this.month = month)
+            observer.next(dayInstance);
             if (!daycode) this.$daySubject.next(Object.keys(snapshot.val())[0]);
           } else {
             observer.error(new Error(
@@ -98,7 +112,7 @@ export class CashFlowService {
     );
   }
 
-  public $onLastMonth(keyMonth: string, lastDay: number): Observable<DailyCashFlowModel> {
+  public $onReportMonth(keyMonth: string, lastDay: number): Observable<DailyCashFlowModel> {
     let unsubscribe: Unsubscribe = () => {};
     return new Observable<DailyCashFlowModel>((observer) => {
       unsubscribe = onChildAdded(
@@ -120,6 +134,38 @@ export class CashFlowService {
       );
     }).pipe(
       take(lastDay),
+      tap({ error: this.handleError }),
+      finalize(unsubscribe)
+    );
+  }
+
+  public $onReportSemiAnnual(year: number, month: number): Observable<MonthlyCashFlowModel> {
+    const lastDate = new Date(year, month - 7, 1);
+    const lastMonth = lastDate.getMonth() + 1;
+    let unsubscribe: Unsubscribe = () => {};
+    return new Observable<MonthlyCashFlowModel>((observer) => {
+      unsubscribe = onChildAdded(
+        query(
+          ref(this.database, 'monthly-cash-flow'),
+          orderByKey(),
+          startAt(`${lastDate.getFullYear()}-${lastMonth < 10 ? `0${lastMonth}` : lastMonth}`),
+          endAt(`${year}-${month < 10 ? `0${month}` : month}`)
+        ),
+        snapshot => {
+          if (snapshot.exists() && snapshot.key) {
+            const yearAndMonth = snapshot.key.split('-').map(val => parseInt(val));
+            const lastDay = new Date(yearAndMonth[0], yearAndMonth[1], 0).getDate();
+            const monthData: MonthlyCashFlowInterface = snapshot.val();
+            const month = new MonthlyCashFlowModel(this, lastDay, monthData);
+            observer.next(month);
+          } else {
+            observer.error(new Error('No se encontró información en un día de $onLastMonth'));
+          }
+        },
+        error => observer.error(error)
+      );
+    }).pipe(
+      take(6),
       tap({ error: this.handleError }),
       finalize(unsubscribe)
     );

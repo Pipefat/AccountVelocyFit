@@ -1,0 +1,119 @@
+@import '../../../../assets/material-custom-colors.style.scss';
+
+:host {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  justify-items: center;
+  position: relative;
+  margin: 15px 0px;
+}
+
+$colors:
+  'default' #505050,
+  'primary' map-get($custom-primary, 500),
+  'warn' map-get($custom-warn, 500),
+  'accent' map-get($custom-accent, 900);
+
+@each $name, $color in $colors {
+  .color-value-#{$name} {
+    .symbol {
+      color: $color;
+    }
+    div.value {
+      border-left: 2px solid $color;
+      h3 {
+        color: $color;
+      }
+    }
+  }
+}
+
+div.box-container {
+  width: 90%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  justify-items: center;
+  background-color: white;
+  position: relative;
+  border-radius: 15px;
+  box-shadow: 0px 2px 6px -1px #111;
+  margin: 15px 0px;
+  h2 {
+    width: 87%;
+    font-size: 16px;
+    font-weight: normal;
+    color: map-get($custom-primary, 900);
+    margin: 15px 0px 0px 0px;
+  }
+  p {
+    width: 84%;
+    font-size: 15px;
+    margin: 5px 0px 5px 0px;
+    color: #757575;
+  }
+  div.chart-container {
+    width: 85%;
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+    div.chart-box {
+      width: 114%;
+      height: 220px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      ::ng-deep .ngx-charts text {
+        fill: #757575 !important;
+      }
+    }
+  }
+  div.values {
+    width: 85%;
+    display: flex;
+    flex-flow: row nowrap;
+    div.value-container {
+      flex-grow: 1;
+      display: flex;
+      flex-flow: row nowrap;
+      margin: 5px 0px;
+      .symbol {
+        width: 20px;
+        height: 100%;
+        font-size: 19px;
+      }
+      div.value {
+        flex-grow: 1;
+        display: flex;
+        flex-flow: column nowrap;
+        h3 {
+          margin: 0px 0px 0px 5px;
+          font-size: 19px;
+          font-weight: normal;
+        }
+        p {
+          margin: 0px 0px 0px 10px;
+          font-size: 16px;
+        }
+        &.sub {
+          h3 {
+            font-size: 17px;
+          }
+          p {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+  p.consumtions {
+    width: 95%;
+    text-align: right;
+    font-size: 13px;
+    color: #757575;
+    margin: 5px 0px;
+  }
+}

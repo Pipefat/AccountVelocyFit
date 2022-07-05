@@ -1,1 +1,144 @@
-<p>reports-dash works!</p>
+<!-- Report of the Last Week -->
+<div *ngIf="$lastWeek | async as lastWeek" class="box-container">
+  <h2>Reporte Master Class</h2>
+  <p>{{ lastWeek.report[0].name }}</p>
+  <div class="chart-container">
+    <div class="chart-box">
+      <ngx-charts-line-chart
+        [results]="lastWeek.report"
+        [scheme]="colorScheme"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [timeline]="true">
+      </ngx-charts-line-chart>
+    </div>
+  </div>
+  <div class="values">
+    <div class="value-container color-value-default">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="value">
+        <h3>{{ lastWeek.sales | money:true }}</h3>
+        <p>Total</p>
+      </div>
+    </div>
+  </div>
+  <div class="values">
+    <div class="value-container color-value-warn">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3>{{ lastWeek.sales | envelope:'red' | money:true }}</h3>
+        <p>Sobre Rojo</p>
+      </div>
+    </div>
+    <div class="value-container color-value-primary">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3>{{ lastWeek.sales | envelope:'green' | money:true }}</h3>
+        <p>Sobre Verde</p>
+      </div>
+    </div>
+  </div>
+  <p class="consumtions">*{{ lastWeek.consumtions }} Consumos nuevos</p>
+</div>
+
+<!-- Report of the Last Month -->
+<div *ngIf="$lastMonth | async as lastMonth" class="box-container">
+  <h2>Reporte Para Testimonio</h2>
+  <p>{{ lastMonth.report[0].name }}</p>
+  <div class="chart-container">
+    <div class="chart-box">
+      <ngx-charts-line-chart
+        [results]="lastMonth.report"
+        [scheme]="colorScheme"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [timeline]="true">
+      </ngx-charts-line-chart>
+    </div>
+  </div>
+  <div class="values">
+    <div class="value-container color-value-default">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="value">
+        <h3>{{ lastMonth.sales | money:true }}</h3>
+        <p>Total</p>
+      </div>
+    </div>
+  </div>
+  <div class="values">
+    <div class="value-container color-value-warn">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3>{{ lastMonth.sales | envelope:'red' | money:true }}</h3>
+        <p>Sobre Rojo</p>
+      </div>
+    </div>
+    <div class="value-container color-value-primary">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3>{{ lastMonth.sales | envelope:'green' | money:true }}</h3>
+        <p>Sobre Verde</p>
+      </div>
+    </div>
+  </div>
+  <p class="consumtions">*{{ lastMonth.consumtions }} Consumos nuevos</p>
+</div>
+
+<!-- Report of the Last Semester -->
+<div *ngIf="$semester | async as semester" class="box-container">
+  <h2>Reporte de Ganancias y Pérdidas</h2>
+  <p>{{ semester.report[0].series[0].name }} - {{ semester.report[0].series[5].name }}</p>
+  <div class="chart-container">
+    <div class="chart-box">
+      <ngx-charts-line-chart
+        [results]="semester.report"
+        [scheme]="colorScheme"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [timeline]="true">
+      </ngx-charts-line-chart>
+    </div>
+  </div>
+  <div class="values">
+    <div class="value-container color-value-default">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3>{{ semester.sales | money:true }}</h3>
+        <p>Ventas</p>
+      </div>
+    </div>
+    <div class="value-container color-value-warn">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3 *ngIf="semester.utility">{{ semester.utility | money:true }}</h3>
+        <p>Utilidad</p>
+      </div>
+    </div>
+  </div>
+  <div class="values">
+    <div class="value-container color-value-primary">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3 *ngIf="semester.profits">{{ semester.profits | money:true }}</h3>
+        <p>Ganancias</p>
+      </div>
+    </div>
+    <div class="value-container color-value-accent">
+      <mat-icon class="symbol" aria-hidden="false" aria-label="Insights icon">attach_money</mat-icon>
+      <div class="sub value">
+        <h3 *ngIf="semester.results">{{ semester.results | money:true }}</h3>
+        <p>Resultados</p>
+      </div>
+    </div>
+  </div>
+  <p class="consumtions">*Últimos 6 meses</p>
+</div>
