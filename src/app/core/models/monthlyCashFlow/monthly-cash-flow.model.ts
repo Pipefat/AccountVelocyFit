@@ -93,7 +93,7 @@ export class MonthlyCashFlowModel {
   }
 
   get $onLastWeek(): Observable<DailyCashFlowModel> {
-    const firstDayWeek = new Date(this.year, this.month - 1, this.currentDay - 8);
+    const firstDayWeek = new Date(this.year, this.month - 1, this.currentDay - 7);
     const lastDayWeek = new Date(this.year, this.month - 1, this.currentDay - 1);
     const sameMonth = firstDayWeek.getMonth() === lastDayWeek.getMonth();
     const names = ['Ventas', 'Gastos'];
